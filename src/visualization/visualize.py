@@ -7,9 +7,9 @@ from pathlib import Path
 import pandas as pd
 
 
-def save_and_show(fig, save_path: Path = None):
+def save_and_show(fig, save_path: Path = None) -> None:
     """
-    Вспомогательная функция: сохраняет или показывает график.
+    Всегда отображает график. Сохраняет его, если указан save_path.
 
     Parameters
     ----------
@@ -23,8 +23,8 @@ def save_and_show(fig, save_path: Path = None):
     if save_path is not None:
         if save_path.suffix == "":
             raise ValueError(
-                f"save_path должен указывать на файл"
-                f"с расширением (например, .png), "
+                "save_path должен указывать на файл"
+                "с расширением (например, .png), "
                 f"но получена папка: {save_path}"
             )
         save_path.parent.mkdir(parents=True, exist_ok=True)
@@ -37,7 +37,7 @@ def plot_class_balance(
         target_col: str = "status",
         size: tuple = (6, 4),
         save_path: Path = None
-        ):
+        ) -> None:
     """
     График распределения классов (столбчатая диаграмма).
 
@@ -64,7 +64,7 @@ def plot_target_correlation(
         target_col: str = "status",
         size: tuple = (4, 8),
         save_path: Path = None
-        ):
+        ) -> None:
     """
     Строит тепловую карту корреляции всех признаков с целевой переменной.
 
@@ -114,7 +114,7 @@ def plot_correlation_heatmap(
         df: pd.DataFrame,
         size: tuple = (12, 10),
         save_path: Path = None
-        ):
+        ) -> None:
     """
     Строит тепловую карту корреляции всех признаков с целевой переменной.
 
@@ -137,13 +137,74 @@ def plot_correlation_heatmap(
     save_and_show(fig, save_path)
 
 
-def plot_confusion_matrix(y_true, y_pred, save_path: Path = None):
-    pass
+def plot_confusion_matrix(y_true, y_pred, save_path: Path = None) -> None:
+    cm = confusion_matrix(y_true, y_pred)
+    plt.figure(figsize=(6, 5))
+    sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", cbar=False)
+    plt.title("Confusion Matrix")
+    plt.ylabel("Истинный класс")
+    plt.xlabel("Предсказанный класс")
+    if save_path:
+        save_path.parent.mkdir(exist_ok=True)
+        plt.savefig(save_path, dpi=150, bbox_inches="tight")
+    plt.show()
 
 
 def plot_classification_report_as_heatmap(
         y_true,
         y_pred,
         save_path: Path = None
-):
-    pass
+) -> None:
+    report = classification_report(y_true, y_pred, output_dict=True)
+    report_df = pd.DataFrame(report).iloc[:-1, :].T
+
+    plt.figure(figsize=(8, 4))
+    sns.heatmap(
+        report_df.astype(float),
+        annot=True,
+        cmap="viridis",
+        cbar=True,
+        fmt=".2f"
+        )
+    plt.title("Classification Report (Heatmap)")
+    if save_path:
+        save_path.parent.mkdir(exist_ok=True)
+        plt.savefig(save_path, dpi=150, bbox_inches="tight")
+    plt.show()
+
+
+def plot_feature_importance(
+        importance_dict: dict,
+        top_n: int = 15,
+        save_path: Path = None
+        ) -> None:
+    """
+    Строит горизонтальный barplot топ-N самых важных признаков.
+
+    Parameters
+    ----------
+    importance_dict : dict
+        Словарь {признак: важность}
+    top_n : int
+        Сколько топ-признаков отобразить
+    save_path : Path, optional
+    """
+    # Сортируем по убыванию
+    sorted_items = sorted(
+        importance_dict.items(),
+        key=lambda x: x[1],
+        reverse=True
+        )
+    top_features = dict(sorted_items[:top_n])
+
+    fig, ax = plt.subplots(figsize=(8, top_n * 0.3))
+    sns.barplot(
+        x=list(top_features.values()),
+        y=list(top_features.keys()),
+        ax=ax,
+        palette="viridis"
+    )
+    ax.set_xlabel("Важность (gain)")
+    ax.set_title(f"Топ-{top_n} важных признаков")
+    plt.tight_layout()
+    save_and_show(fig, save_path)
