@@ -1,7 +1,7 @@
 # src/data/make_dataset.py
 import pandas as pd
 from typing import Tuple
-from config.paths import DATA_PATH
+from config.paths import DATA_DIR
 from sklearn.model_selection import train_test_split
 
 
@@ -19,9 +19,9 @@ def load_data() -> pd.DataFrame:
     FileNotFoundError
         Если файл по указанному пути не существует.
     """
-    if not DATA_PATH.exists():
-        raise FileNotFoundError(f"Датасет по пути '{DATA_PATH}' не найден")
-    df = pd.read_csv(DATA_PATH)
+    if not DATA_DIR.exists():
+        raise FileNotFoundError(f"Датасет по пути '{DATA_DIR}' не найден")
+    df = pd.read_csv(DATA_DIR)
     return df.drop(columns='name')
 
 
