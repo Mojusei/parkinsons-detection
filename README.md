@@ -4,6 +4,7 @@
 
 
 ## Структура проекта
+```text
 parkinsons-detection/
 ├── data/raw/                 # Сырые данные (внешний источник)
 ├── notebooks/                # EDA и отчёт по модели
@@ -18,7 +19,7 @@ parkinsons-detection/
 │   └── figures/              # Графики (confusion matrix, отчёты и др.)
 ├── pyproject.toml            # Зависимости и CLI-команды
 └── README.md
-
+```
 
 ## Установка
 
