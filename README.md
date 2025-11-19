@@ -6,16 +6,16 @@
 ## Структура проекта
 ```text
 parkinsons-detection/
-├── data/raw/                 # Сырые данные (внешний источник)
+├── config/paths.py           # Централизованные пути
+├── data/                     # Данные 
 ├── notebooks/                # EDA и отчёт по модели
 ├── src/
-│   ├── config/paths.py       # Централизованные пути
 │   ├── data/                 # Загрузка и разделение данных
 │   ├── models/               # Обучение, сохранение, оценка
 │   └── visualization/        # Визуализация метрик и важности признаков
 ├── models/                   # Сохранённые модели (joblib)
 ├── reports/
-│   ├── feature_importance.csv
+│   ├── parkinsons_feature_importance.csv
 │   └── figures/              # Графики (confusion matrix, отчёты и др.)
 ├── pyproject.toml            # Зависимости и CLI-команды
 └── README.md
